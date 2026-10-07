@@ -1,0 +1,288 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Giornata Benessere — Prenotazione Online</title>
+  <style>
+    :root {
+      --bg: #11110f;
+      --card: #1c1c1a;
+      --card2: #282825;
+      --accent: #ff6b00;
+      --accent-muted: rgba(255,107,0,0.15);
+      --text: #ffffff;
+      --muted: #b3b3b3;
+      --line: #333330;
+      --danger: #ff453a;
+      --success: #30d158;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background-color: var(--bg);
+      color: var(--text);
+      font-family: var(--font);
+      padding: 16px;
+      line-height: 1.5;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    header {
+      text-align: center;
+      margin-bottom: 20px;
+      padding-top: 10px;
+    }
+    .brand-logo {
+      height: 48px;
+      object-fit: contain;
+      margin-bottom: 12px;
+    }
+    h1 {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+    }
+    p.subtitle {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
+    }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .event-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .event-date {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--accent);
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .price-badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--card2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 13px;
+      margin-top: 6px;
+    }
+    .slots-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .slot-btn {
+      background: var(--card2);
+      border: 1px solid var(--line);
+      color: #fff;
+      padding: 12px 8px;
+      border-radius: 12px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    .slot-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+    }
+    .slot-btn.selected {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+    .slot-btn:disabled {
+      opacity: 0.35;
+      text-decoration: line-through;
+      cursor: not-allowed;
+      border-color: transparent;
+    }
+    .field {
+      margin-bottom: 14px;
+    }
+    .field label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field input[type="tel"],
+    .field input[type="email"] {
+      width: 100%;
+      height: 46px;
+      background: var(--card2);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 0 14px;
+      color: #fff;
+      font-size: 15px;
+      outline: none;
+    }
+    .field input:focus {
+      border-color: var(--accent);
+    }
+    .checkbox-field {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      font-size: 13px;
+      color: #ddd;
+      margin-top: 12px;
+      cursor: pointer;
+    }
+    .checkbox-field input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin-top: 2px;
+      accent-color: var(--accent);
+    }
+    .privacy-box {
+      background: var(--card2);
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      padding: 10px;
+      font-size: 11px;
+      color: var(--muted);
+      max-height: 90px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+    button.submit-btn {
+      width: 100%;
+      height: 50px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 14px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 16px;
+    }
+    button.submit-btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+    .alert {
+      padding: 12px;
+      border-radius: 12px;
+      font-size: 14px;
+      margin-bottom: 16px;
+      display: none;
+    }
+    .alert.error { background: rgba(255,69,58,0.15); border: 1px solid var(--danger); color: #ff8080; }
+    .alert.success { background: rgba(48,209,88,0.15); border: 1px solid var(--success); color: #80ff9f; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <img src="logomarchio mauromassaggi.png" alt="Mauro Massaggi" class="brand-logo" onerror="this.style.display='none'">
+    <h1 id="eventTitle">Giornata Benessere</h1>
+    <p id="eventSubtitle" class="subtitle">Prenotazione online trattamenti e massaggi</p>
+  </header>
+
+  <div id="statusAlert" class="alert"></div>
+
+  <main id="bookingApp">
+    <div id="loadingView" class="card" style="text-align:center;padding:30px">
+      <p class="subtitle">Caricamento disponibilità orari in corso...</p>
+    </div>
+
+    <div id="closedView" class="card" style="display:none;text-align:center;padding:30px">
+      <h2 style="font-size:18px;margin-bottom:8px;color:var(--danger)">Prenotazioni Chiuse</h2>
+      <p class="subtitle" id="closedMessage">Le prenotazioni per questo evento sono attualmente chiuse dal titolare.</p>
+    </div>
+
+    <div id="mainFormView" style="display:none">
+      <section class="card event-info">
+        <div class="event-date">
+          <span id="eventDateText">--/--/----</span>
+        </div>
+        <p id="eventNotes" class="subtitle" style="font-size:13px"></p>
+        <div class="price-badge">
+          <span>Iscritti al Centro: <strong id="priceMember">€ 45</strong></span>
+          <span style="margin-left:12px;color:var(--muted)">Non iscritti: <strong id="priceNonMember">€ 50</strong></span>
+        </div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:16px;margin-bottom:10px">1. Seleziona un Orario Disponibile</h2>
+        <div id="slotsContainer" class="slots-grid"></div>
+      </section>
+
+      <section class="card">
+        <h2 style="font-size:16px;margin-bottom:14px">2. I Tuoi Dati</h2>
+        <form id="bookingForm">
+          <div class="field">
+            <label>Nome *</label>
+            <input type="text" id="inputNome" required placeholder="Mario">
+          </div>
+          <div class="field">
+            <label>Cognome *</label>
+            <input type="text" id="inputCognome" required placeholder="Rossi">
+          </div>
+          <div class="field">
+            <label>Telefono *</label>
+            <input type="tel" id="inputTelefono" required placeholder="333 1234567">
+          </div>
+          <div class="field">
+            <label>Email *</label>
+            <input type="email" id="inputEmail" required placeholder="mario.rossi@example.com">
+          </div>
+
+          <label class="checkbox-field">
+            <input type="checkbox" id="checkIscritto">
+            <span>Sono iscritto/a al centro sportivo (Applica tariffa agevolata)</span>
+          </label>
+
+          <div style="margin-top:16px">
+            <label style="font-size:13px;color:var(--muted)">Informativa Privacy & Trattamento Dati</label>
+            <div class="privacy-box">
+              Informativa ai sensi del Regolamento UE 2016/679 (GDPR). I dati personali forniti (nome, cognome, telefono, email) vengono raccolti al solo scopo di gestire la prenotazione per la Giornata Benessere e confermare l'appuntamento. I dati saranno conservati unicamente dal titolare per il tempo strettamente necessario all'organizzazione dell'evento e all'erogazione del servizio. Nessun dato verrà ceduto a terzi per finalità promozionali.
+            </div>
+            <label class="checkbox-field" style="margin-top:10px">
+              <input type="checkbox" id="checkPrivacy" required>
+              <span>Dichiaro di aver preso visione dell'informativa privacy *</span>
+            </label>
+            <label class="checkbox-field" style="margin-top:10px">
+              <input type="checkbox" id="checkPromozionale">
+              <span>(Opzionale) Acconsento a ricevere comunicazioni sui prossimi eventi e promozioni</span>
+            </label>
+          </div>
+
+          <button type="submit" id="submitBtn" class="submit-btn" disabled>Conferma Prenotazione</button>
+        </form>
+      </section>
+    </div>
+
+    <div id="successView" class="card" style="display:none;text-align:center;padding:30px">
+      <h2 style="font-size:20px;color:var(--success);margin-bottom:8px">Prenotazione Confermata!</h2>
+      <p class="subtitle" style="margin-bottom:16px">Questa è una <strong>conferma di prenotazione</strong> per il tuo massaggio.</p>
+
+      <div id="summaryBox" style="background:var(--card2);border:1px solid var(--line);border-radius:12px;padding:16px;text-align:left;font-size:14px;margin-bottom:20px"></div>
+
+      <p class="subtitle" style="font-size:13px;color:#fff">💳 <strong>Pagamento:</strong> Da effettuare in sede al termine del trattamento.</p>
+      <p class="subtitle" style="font-size:12px;margin-top:8px">Presentati qualche minuto prima dell'orario stabilito presso la reception del centro sportivo.</p>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="prenota.js"></script>
+</body>
+</html>
