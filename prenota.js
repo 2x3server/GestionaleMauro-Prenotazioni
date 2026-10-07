@@ -108,6 +108,7 @@
           tariffa_iscritti: 45.00,
           tariffa_non_iscritti: 50.00,
           stato: 'aperto',
+          luogo_evento: '',
           orari: [
             "09:00 - 10:00",
             "10:15 - 11:15",
@@ -211,6 +212,12 @@
     document.getElementById('eventTitle').textContent = currentEvent.nome_centro;
     document.getElementById('eventSubtitle').textContent = `Giornata Benessere — ${formatDate(currentEvent.data_evento)}`;
     document.getElementById('eventDateText').textContent = `📅 Data Evento: ${formatDate(currentEvent.data_evento)}`;
+    const locationEl = document.getElementById('eventLocationText');
+    if (locationEl) {
+      const location = String(currentEvent.luogo_evento || '').trim();
+      locationEl.textContent = location ? `📍 presso ${location}` : '';
+      locationEl.style.display = location ? 'block' : 'none';
+    }
     document.getElementById('eventNotes').textContent = currentEvent.note || '';
     document.getElementById('priceMember').textContent = `€ ${Number(currentEvent.tariffa_iscritti).toFixed(2)}`;
     document.getElementById('priceNonMember').textContent = `€ ${Number(currentEvent.tariffa_non_iscritti).toFixed(2)}`;
