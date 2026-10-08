@@ -215,8 +215,21 @@
     const locationEl = document.getElementById('eventLocationText');
     if (locationEl) {
       const location = String(currentEvent.luogo_evento || '').trim();
-      locationEl.textContent = location ? `📍 presso ${location}` : '';
+      locationEl.textContent = location ? `📍 ${location}` : '';
       locationEl.style.display = location ? 'block' : 'none';
+      locationEl.style.cursor = location ? 'pointer' : 'default';
+      locationEl.title = location ? 'Apri l’indirizzo nelle mappe' : '';
+      if (location) {
+        locationEl.onclick = () => {
+          const q = encodeURIComponent(location);
+          const appleUrl = `http://maps.apple.com/?q=${q}`;
+          const googleUrl = `https://www.google.com/maps/search/?api=1&query=${q}`;
+          const useGoogle = window.confirm('Aprire l’indirizzo con Google Maps?\\n\\nOK = Google Maps\\nAnnulla = Mappe di iPhone');
+          window.location.href = useGoogle ? googleUrl : appleUrl;
+        };
+      } else {
+        locationEl.onclick = null;
+      }
     }
     document.getElementById('eventNotes').textContent = currentEvent.note || '';
     document.getElementById('priceMember').textContent = `€ ${Number(currentEvent.tariffa_iscritti).toFixed(2)}`;
