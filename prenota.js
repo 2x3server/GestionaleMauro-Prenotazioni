@@ -247,14 +247,46 @@
       locationEl.title = location ? 'Apri l’indirizzo nelle mappe' : '';
       if (location) {
         locationEl.onclick = () => {
-          const q = encodeURIComponent(location);
-          const appleUrl = `http://maps.apple.com/?q=${q}`;
-          const googleUrl = `https://www.google.com/maps/search/?api=1&query=${q}`;
-          const useGoogle = window.confirm('Aprire l’indirizzo con Google Maps?\\n\\nOK = Google Maps\\nAnnulla = Mappe di iPhone');
-          window.location.href = useGoogle ? googleUrl : appleUrl;
+          const overlay = document.getElementById('mapChoiceOverlay');
+          if (!overlay) {
+            window.location.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(location)}`;
+            return;
+          }
+          overlay.dataset.location = location;
+          overlay.classList.add('is-open');
+          overlay.setAttribute('aria-hidden', 'false');
         };
       } else {
         locationEl.onclick = null;
+      }
+
+      const mapOverlay = document.getElementById('mapChoiceOverlay');
+      const closeMapChoice = () => {
+        if (!mapOverlay) return;
+        mapOverlay.classList.remove('is-open');
+        mapOverlay.setAttribute('aria-hidden', 'true');
+      };
+      const openMap = (provider) => {
+        if (!mapOverlay) return;
+        const destination = String(mapOverlay.dataset.location || '').trim();
+        if (!destination) return;
+        const q = encodeURIComponent(destination);
+        const url = provider === 'apple'
+          ? `https://maps.apple.com/?q=${q}`
+          : `https://www.google.com/maps/search/?api=1&query=${q}`;
+        closeMapChoice();
+        window.location.href = url;
+      };
+      const googleButton = document.getElementById('openGoogleMaps');
+      const appleButton = document.getElementById('openAppleMaps');
+      const cancelButton = document.getElementById('closeMapChoice');
+      if (googleButton) googleButton.onclick = () => openMap('google');
+      if (appleButton) appleButton.onclick = () => openMap('apple');
+      if (cancelButton) cancelButton.onclick = closeMapChoice;
+      if (mapOverlay) {
+        mapOverlay.onclick = (event) => {
+          if (event.target === mapOverlay) closeMapChoice();
+        };
       }
     }
     document.getElementById('eventNotes').textContent = currentEvent.note || '';
