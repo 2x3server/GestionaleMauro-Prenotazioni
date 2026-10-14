@@ -203,6 +203,27 @@
     }
     .alert.error { background: rgba(255,69,58,0.15); border: 1px solid var(--danger); color: #ff8080; }
     .alert.success { background: rgba(48,209,88,0.15); border: 1px solid var(--success); color: #80ff9f; }
+    .map-choice-overlay {
+      position: fixed; inset: 0; z-index: 1000; display: none;
+      align-items: center; justify-content: center; padding: 20px;
+      background: rgba(0,0,0,0.72);
+    }
+    .map-choice-overlay.is-open { display: flex; }
+    .map-choice-dialog {
+      width: 100%; max-width: 360px; padding: 22px;
+      background: var(--card); border: 1px solid var(--line);
+      border-radius: 18px; box-shadow: 0 12px 40px rgba(0,0,0,0.35);
+    }
+    .map-choice-dialog h2 { font-size: 18px; margin-bottom: 6px; }
+    .map-choice-dialog p { color: var(--muted); font-size: 14px; margin-bottom: 16px; }
+    .map-choice-button {
+      width: 100%; min-height: 48px; margin-top: 9px; padding: 10px 14px;
+      border: 1px solid var(--line); border-radius: 12px;
+      background: var(--card2); color: var(--text); font-size: 15px;
+      font-weight: 600; cursor: pointer;
+    }
+    .map-choice-button.primary { background: var(--accent); border-color: var(--accent); }
+    .map-choice-button.cancel { background: transparent; font-weight: 500; }
   </style>
 </head>
 <body>
@@ -300,6 +321,16 @@
       <p class="subtitle" style="font-size:12px;margin-top:8px">Presentati qualche minuto prima dell'orario stabilito presso la reception del centro sportivo.</p>
     </div>
   </main>
+
+  <div id="mapChoiceOverlay" class="map-choice-overlay" aria-hidden="true">
+    <section class="map-choice-dialog" role="dialog" aria-modal="true" aria-labelledby="mapChoiceTitle">
+      <h2 id="mapChoiceTitle">Apri l'indirizzo</h2>
+      <p>Scegli l'app di navigazione che preferisci.</p>
+      <button type="button" id="openGoogleMaps" class="map-choice-button primary">Google Maps</button>
+      <button type="button" id="openAppleMaps" class="map-choice-button">Mappe Apple</button>
+      <button type="button" id="closeMapChoice" class="map-choice-button cancel">Annulla</button>
+    </section>
+  </div>
 
   <script src="config.js"></script>
   <script src="prenota.js"></script>
