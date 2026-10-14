@@ -209,9 +209,35 @@
     currentEvent = res.event;
     bookedSlots = res.booked_slots || [];
 
-    document.getElementById('eventTitle').textContent = currentEvent.nome_centro;
-    document.getElementById('eventSubtitle').textContent = `Giornata Benessere — ${formatDate(currentEvent.data_evento)}`;
-    document.getElementById('eventDateText').textContent = `📅 Data Evento: ${formatDate(currentEvent.data_evento)}`;
+    const displayTitle = currentEvent.titolo_personalizzato || currentEvent.nome_centro;
+    const displayDate = currentEvent.data_testo || `Giornata Benessere — ${formatDate(currentEvent.data_evento)}`;
+    document.getElementById('eventTitle').textContent = displayTitle;
+    document.getElementById('eventSubtitle').textContent = displayDate;
+    document.getElementById('eventDateText').textContent = `📅 ${displayDate}`;
+
+    const heroImg = document.getElementById('eventHeroImg');
+    if (heroImg) {
+      const imageUrl = currentEvent.immagine_url || '';
+      if (imageUrl) {
+        heroImg.onload = () => { heroImg.style.display = 'block'; };
+        heroImg.onerror = () => {
+          heroImg.style.display = 'none';
+          console.error('Immagine personalizzata non caricabile dalla pagina pubblica.');
+        };
+        heroImg.src = imageUrl;
+        if (heroImg.complete && heroImg.naturalWidth > 0) heroImg.style.display = 'block';
+      } else {
+        heroImg.removeAttribute('src');
+        heroImg.style.display = 'none';
+      }
+    }
+
+    const customText = document.getElementById('eventCustomText');
+    if (customText) {
+      customText.textContent = currentEvent.testo_personalizzato || '';
+      customText.style.display = currentEvent.testo_personalizzato ? 'block' : 'none';
+    }
+
     const locationEl = document.getElementById('eventLocationText');
     if (locationEl) {
       const location = String(currentEvent.luogo_evento || '').trim();
