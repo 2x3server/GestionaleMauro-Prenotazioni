@@ -306,8 +306,11 @@
     const container = document.getElementById('slotsContainer');
     if (!container || !currentEvent || !Array.isArray(currentEvent.orari)) return;
 
-    container.innerHTML = currentEvent.orari.map(time => {
-      const isBooked = bookedSlots.includes(time);
+    const normalizedBookedSlots = (bookedSlots || []).map(s => String(s || '').trim());
+
+    container.innerHTML = currentEvent.orari.map(rawTime => {
+      const time = String(rawTime || '').trim();
+      const isBooked = normalizedBookedSlots.includes(time);
       const isSelected = selectedSlot === time;
       const disabledAttr = isBooked ? 'disabled' : '';
       const selectedClass = isSelected ? 'selected' : '';
